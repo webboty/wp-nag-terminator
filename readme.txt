@@ -4,7 +4,7 @@ Tags: admin, notice, nag, dismiss, hide
 Requires at least: 5.5
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 GitHub Plugin URI: webboty/wp-nag-terminator
@@ -67,6 +67,9 @@ WP core (and some plugins) renders the same notice with different text for admin
 3. The blue "Terminated NAGs N" counter in the admin bar.
 
 == Changelog ==
+
+= 1.1.6 =
+* Fix: the excerpt shown in the "My hidden NAGs" and "NAGs hidden for everyone" tables no longer includes the "Hide for me / Hide for everyone / Yes / Cancel" action-bar text. The AJAX collector now reads the cleaned notice clone (action bar removed) for both the HTML and the text, so the stored excerpt reflects only the original notice.
 
 = 1.1.5 =
 * Fix: detect admin notices rendered after `admin_footer` (e.g. the WooCommerce Anti-Fraud plugin's "Select the Default Protection Level" notice). The Detector's output buffer is now closed on `shutdown` at `-PHP_INT_MAX` so notices rendered late in the page (after the body, on `admin_footer`, `admin_print_footer_scripts`, etc.) are still fingerprinted and the "Hide for me / Hide for everyone" action bar is injected. Previously these notices slipped past the buffer and were unhidable.

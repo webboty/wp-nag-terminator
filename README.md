@@ -64,6 +64,9 @@ The plugin likely prints its notice on a very late hook (e.g. `admin_footer` or 
 
 ## Changelog
 
+### 1.1.6
+- **Fix:** the excerpt shown in the *My hidden NAGs* and *NAGs hidden for everyone* tables no longer includes the "Hide for me / Hide for everyone / Yes / Cancel" action-bar text. The AJAX collector now reads the cleaned notice clone (action bar removed) for both the HTML and the text, so the stored excerpt reflects only the original notice.
+
 ### 1.1.5
 - **Fix:** detect admin notices rendered after `admin_footer` (e.g. the WooCommerce Anti-Fraud plugin's "Select the Default Protection Level" notice). The Detector's output buffer is now closed on `shutdown` at `-PHP_INT_MAX` so notices rendered late in the page (after the body, on `admin_footer`, `admin_print_footer_scripts`, etc.) are still fingerprinted and the "Hide for me / Hide for everyone" action bar is injected. Previously these notices slipped past the buffer and were unhidable.
 - Also skips the buffer entirely for `DOING_AJAX` requests so AJAX responses are never buffered and echoed back at shutdown.

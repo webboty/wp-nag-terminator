@@ -86,9 +86,14 @@
     function collectContent( $bar ) {
         var $notice = findNotice( $bar );
         // Clone the notice and remove the action bar from the clone.
+        // We pull both the HTML and the text from the clone so the
+        // stored content, the excerpt shown in the tables, and the
+        // prefix fingerprint all reflect the original notice without
+        // our injected "Hide for me / Hide for everyone / Yes / Cancel"
+        // action-bar text bleeding in.
         var $clone = $notice.clone();
         $clone.find( '.nag-terminator-actions' ).remove();
-        var text = $notice.text();
+        var text = $clone.text();
         return {
             content: $clone.prop( 'outerHTML' ) || '',
             excerpt: text.substring( 0, 200 ).replace( /\s+/g, ' ' ).trim(),
