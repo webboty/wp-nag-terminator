@@ -53,12 +53,17 @@ class Detector {
 
     /**
      * Register hooks.
+     *
+     * The buffer starts at admin_head (priority 1) so it covers the body
+     * of every admin page. It closes on shutdown at the lowest possible
+     * priority so we still catch notices rendered late (e.g. some plugins
+     * print notices from admin_footer or admin_footer-{hook_suffix} hooks
+     * with default priority, or from admin_print_footer_scripts).
      */
     public function register() {
         add_action( 'admin_head', array( $this, 'start_buffer' ), 1 );
-        add_action( 'admin_footer', array( $this, 'end_buffer' ), PHP_INT_MAX );
         add_action( 'in_admin_header', array( $this, 'start_buffer' ), 1 );
-        add_action( 'in_admin_footer', array( $this, 'end_buffer' ), PHP_INT_MAX );
+        add_action( 'shutdown', array( $this, 'end_buffer' ), -PHP_INT_MAX );
     }
 
     /**
@@ -71,30 +76,51 @@ class Detector {
         if ( ! is_admin() ) {
             return;
         }
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            return;
+        }
         if ( ! Capabilities::can_dismiss_for_user() ) {
             return;
         }
         $this->buffering = true;
-        ob_start( array( $this, 'process_buffer' ) );
+        // No callback: process_buffer is called manually in end_buffer
+        // because we capture the content with ob_get_clean() and echo
+        // the processed result. This is what lets us hold the buffer
+        // open all the way until shutdown (so notices rendered on
+        // admin_footer / admin_print_footer_scripts / shutdown are
+        // still inside it).
+        ob_start();
     }
 
     /**
-     * End the output buffer (flushes via PHP).
+     * End the output buffer at shutdown and process the captured
+     * content.
+     *
+     * We use ob_get_clean() to pull the buffered content out as a
+     * string, run process_buffer() on it (strip dismissed, inject
+     * data attributes + action bar on the rest), then echo the
+     * result back to the client. Because this runs at shutdown
+     * priority -PHP_INT_MAX, every admin-page hook has already
+     * fired and any notice rendered anywhere in the page is in
+     * the buffer.
      */
     public function end_buffer() {
         if ( ! $this->buffering ) {
             return;
         }
-        if ( ob_get_level() > 0 ) {
-            // Flush our output buffer; suppress the "no buffer to close"
-            // warning by checking the return value first.
-            $flushed = ob_end_flush();
-            if ( false === $flushed ) {
-                // No active buffer at this level — nothing to do.
-                return;
-            }
-        }
         $this->buffering = false;
+
+        if ( ob_get_level() <= 0 ) {
+            return;
+        }
+
+        $html = ob_get_clean();
+        if ( false === $html || '' === $html ) {
+            return;
+        }
+
+        $processed = $this->process_buffer( $html );
+        echo $processed; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 
     /**
