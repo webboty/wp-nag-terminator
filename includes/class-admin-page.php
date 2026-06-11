@@ -49,14 +49,18 @@ class Admin_Page {
      * @param \WP_Admin_Bar $wp_admin_bar Admin bar instance.
      */
     public function add_admin_bar_menu( $wp_admin_bar ) {
+        // Frontend users with the admin bar can trigger this hook. The
+        // counter is only meaningful in /wp-admin/, so skip the DB
+        // query entirely on the frontend.
+        if ( ! is_admin() ) {
+            return;
+        }
         if ( ! Capabilities::is_staff() ) {
             return;
         }
 
-        $user_id    = get_current_user_id();
-        $user_count = count( Storage::get_user_dismissed( $user_id ) );
-        $glob_count = count( Storage::get_global_dismissed() );
-        $total      = $user_count + $glob_count;
+        $user_id = get_current_user_id();
+        $total   = Storage::get_total_hidden_count( $user_id );
 
         if ( $total <= 0 ) {
             return; // nothing to show
@@ -80,9 +84,6 @@ class Admin_Page {
                 ),
             )
         );
-
-        // DEBUG
-        error_log( 'NAG Term admin bar: user_count=' . $user_count . ' glob_count=' . $glob_count . ' total=' . $total );
     }
 
     /**
@@ -401,6 +402,13 @@ class Admin_Page {
         echo '<label><input type="radio" name="action_link_visibility" value="hover" ' . checked( $vis, 'hover', false ) . '/> ' . esc_html__( 'On hover/focus only', 'wp-nag-terminator' ) . '</label>';
         echo '</td></tr>';
 
+        echo '<tr><th>' . esc_html__( 'Debug logging', 'wp-nag-terminator' ) . '</th><td>';
+        $debug = ! empty( $settings['enable_debug_logging'] );
+        echo '<label><input type="checkbox" name="enable_debug_logging" value="1" ' . checked( $debug, true, false ) . '/> ';
+        echo esc_html__( 'Write diagnostic information to the PHP error log.', 'wp-nag-terminator' ) . '</label>';
+        echo '<p class="description">' . esc_html__( 'Off by default. Enable briefly to debug issues; disable to keep the error log clean.', 'wp-nag-terminator' ) . '</p>';
+        echo '</td></tr>';
+
         echo '</tbody></table>';
         submit_button( __( 'Save settings', 'wp-nag-terminator' ) );
         echo '</form>';
@@ -427,6 +435,7 @@ class Admin_Page {
             $vis = 'always';
         }
         Installer::update_setting( 'action_link_visibility', $vis );
+        Installer::update_setting( 'enable_debug_logging', ! empty( $_POST['enable_debug_logging'] ) ? 1 : 0 );
 
         wp_safe_redirect( add_query_arg( 'updated', '1', wp_get_referer() ) );
         exit;

@@ -111,4 +111,15 @@ class Capabilities {
         }
         return user_can( (int) $user_id, 'edit_posts' );
     }
+
+    /**
+     * Is debug logging enabled? Default off. When on, the plugin
+     * may write to the PHP error log to help diagnose issues.
+     *
+     * @return bool
+     */
+    public static function is_debug_logging_enabled() {
+        $settings = Installer::get_settings();
+        return ! empty( $settings['enable_debug_logging'] );
+    }
 }

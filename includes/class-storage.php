@@ -94,7 +94,11 @@ class Storage {
             'excerpt'   => isset( $meta['excerpt'] ) ? wp_kses_post( $meta['excerpt'] ) : '',
             'dismissed' => time(),
         );
-        return (bool) update_user_meta( $user_id, self::META_USER, $map );
+        $ok = (bool) update_user_meta( $user_id, self::META_USER, $map );
+        if ( $ok ) {
+            self::invalidate_user_count_cache( $user_id );
+        }
+        return $ok;
     }
 
     /**
@@ -115,7 +119,11 @@ class Storage {
             return true;
         }
         unset( $map[ $nag_id ] );
-        return (bool) update_user_meta( $user_id, self::META_USER, $map );
+        $ok = (bool) update_user_meta( $user_id, self::META_USER, $map );
+        if ( $ok ) {
+            self::invalidate_user_count_cache( $user_id );
+        }
+        return $ok;
     }
 
     /* ---------- Global (everyone) ---------- */
@@ -167,6 +175,7 @@ class Storage {
 
         if ( $ok ) {
             self::archive( $nag_id, $user_id, 'global', $meta );
+            self::invalidate_all_count_caches();
         }
         return $ok;
     }
@@ -187,7 +196,11 @@ class Storage {
             return true;
         }
         unset( $map[ $nag_id ] );
-        return self::save_map( self::OPTION_GLOBAL, $map );
+        $ok = self::save_map( self::OPTION_GLOBAL, $map );
+        if ( $ok ) {
+            self::invalidate_all_count_caches();
+        }
+        return $ok;
     }
 
     /* ---------- Archive (recycle bin) ---------- */
@@ -332,5 +345,59 @@ class Storage {
             $ids = array_merge( $ids, array_keys( self::get_global_dismissed() ) );
         }
         return array_values( array_unique( array_filter( $ids ) ) );
+    }
+
+    /* ---------- Cached counts for the admin bar ---------- */
+
+    const COUNT_CACHE_KEY = 'wp_nag_terminator_count_';
+    const GLOBAL_VERSION_OPTION = 'wp_nag_terminator_global_version';
+    const COUNT_CACHE_TTL = 300; // 5 minutes
+
+    /**
+     * Get the total hidden-NAG count for a user (user + global).
+     * Cached in a per-user transient. The cache is keyed on a
+     * global version so a change to the global list automatically
+     * invalidates all users' caches.
+     *
+     * @param int $user_id User ID.
+     * @return int
+     */
+    public static function get_total_hidden_count( $user_id ) {
+        $user_id = (int) $user_id;
+        if ( $user_id <= 0 ) {
+            return 0;
+        }
+        $version = (int) get_option( self::GLOBAL_VERSION_OPTION, 1 );
+        $cache_key = self::COUNT_CACHE_KEY . $user_id . '_v' . $version;
+        $cached    = get_transient( $cache_key );
+        if ( false !== $cached && is_numeric( $cached ) ) {
+            return (int) $cached;
+        }
+        $count = count( self::get_user_dismissed( $user_id ) )
+               + count( self::get_global_dismissed() );
+        set_transient( $cache_key, $count, self::COUNT_CACHE_TTL );
+        return $count;
+    }
+
+    /**
+     * Bump the global version, invalidating all per-user count caches.
+     * Call this whenever the global dismissed list or the archive
+     * changes (dismiss_global, restore_global, delete_archive_entry,
+     * archive).
+     */
+    public static function invalidate_all_count_caches() {
+        $version = (int) get_option( self::GLOBAL_VERSION_OPTION, 1 );
+        update_option( self::GLOBAL_VERSION_OPTION, $version + 1, false );
+    }
+
+    /**
+     * Invalidate a single user's count cache.
+     * Call this when that user's per-user dismissed list changes.
+     *
+     * @param int $user_id User ID.
+     */
+    public static function invalidate_user_count_cache( $user_id ) {
+        $version = (int) get_option( self::GLOBAL_VERSION_OPTION, 1 );
+        delete_transient( self::COUNT_CACHE_KEY . (int) $user_id . '_v' . $version );
     }
 }

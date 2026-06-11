@@ -215,6 +215,15 @@ msgstr ""
 msgid "On hover/focus only"
 msgstr ""
 
+msgid "Debug logging"
+msgstr ""
+
+msgid "Write diagnostic information to the PHP error log."
+msgstr ""
+
+msgid "Off by default. Enable briefly to debug issues; disable to keep the error log clean."
+msgstr ""
+
 msgid "Save settings"
 msgstr ""
 

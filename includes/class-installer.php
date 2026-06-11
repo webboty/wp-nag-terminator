@@ -26,6 +26,7 @@ class Installer {
             'retention_days'         => self::DEFAULT_RETENTION,
             'bypass_global_roles'    => array(),
             'action_link_visibility' => 'always', // 'always' | 'hover'
+            'enable_debug_logging'   => 0,
         );
 
         if ( ! is_array( $existing ) ) {
@@ -60,6 +61,7 @@ class Installer {
             'retention_days'         => self::DEFAULT_RETENTION,
             'bypass_global_roles'    => array(),
             'action_link_visibility' => 'always',
+            'enable_debug_logging'   => 0,
         );
         $stored = get_option( self::OPTION_SETTINGS, array() );
         if ( ! is_array( $stored ) ) {
@@ -77,7 +79,7 @@ class Installer {
      */
     public static function update_setting( $key, $value ) {
         $settings = self::get_settings();
-        $allowed  = array( 'retention_days', 'bypass_global_roles', 'action_link_visibility' );
+        $allowed  = array( 'retention_days', 'bypass_global_roles', 'action_link_visibility', 'enable_debug_logging' );
         if ( ! in_array( $key, $allowed, true ) ) {
             return false;
         }
