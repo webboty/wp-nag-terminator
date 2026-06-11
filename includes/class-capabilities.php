@@ -94,4 +94,21 @@ class Capabilities {
         }
         return (bool) array_intersect( (array) $user->roles, $bypass );
     }
+
+    /**
+     * Is the current user a staff-tier user (admin, editor, author,
+     * shop manager, or any custom role that can edit posts)?
+     *
+     * This excludes subscribers, customers, and other roles that
+     * shouldn't see the admin bar NAG counter.
+     *
+     * @param int|null $user_id User ID. Defaults to current.
+     * @return bool
+     */
+    public static function is_staff( $user_id = null ) {
+        if ( null === $user_id ) {
+            return current_user_can( 'edit_posts' );
+        }
+        return user_can( (int) $user_id, 'edit_posts' );
+    }
 }

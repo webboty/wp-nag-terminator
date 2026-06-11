@@ -37,7 +37,52 @@ class Admin_Page {
      */
     public function register() {
         add_action( 'admin_menu', array( $this, 'add_menu' ) );
+        add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_menu' ), 90 );
         add_action( 'admin_post_wp_nag_terminator_save_settings', array( $this, 'handle_save_settings' ) );
+    }
+
+    /**
+     * Add a "Terminated NAGs N" link to the admin bar with a blue count
+     * bubble. Shown only to staff-tier users (anyone who can edit posts).
+     * Clicking the link opens the Tools -> NAG Terminator admin page.
+     *
+     * @param \WP_Admin_Bar $wp_admin_bar Admin bar instance.
+     */
+    public function add_admin_bar_menu( $wp_admin_bar ) {
+        if ( ! Capabilities::is_staff() ) {
+            return;
+        }
+
+        $user_id    = get_current_user_id();
+        $user_count = count( Storage::get_user_dismissed( $user_id ) );
+        $glob_count = count( Storage::get_global_dismissed() );
+        $total      = $user_count + $glob_count;
+
+        if ( $total <= 0 ) {
+            return; // nothing to show
+        }
+
+        $url = add_query_arg(
+            array( 'page' => self::MENU_SLUG ),
+            admin_url( 'tools.php' )
+        );
+
+        $title = '<span class="ab-label">' . esc_html__( 'Terminated NAGs', 'wp-nag-terminator' ) . '</span>'
+               . ' <span class="wp-nag-terminator-count">' . esc_html( number_format_i18n( $total ) ) . '</span>';
+
+        $wp_admin_bar->add_node(
+            array(
+                'id'    => 'wp-nag-terminator',
+                'title' => $title,
+                'href'  => esc_url( $url ),
+                'meta'  => array(
+                    'title' => esc_attr__( 'Open the NAG Terminator admin page', 'wp-nag-terminator' ),
+                ),
+            )
+        );
+
+        // DEBUG
+        error_log( 'NAG Term admin bar: user_count=' . $user_count . ' glob_count=' . $glob_count . ' total=' . $total );
     }
 
     /**

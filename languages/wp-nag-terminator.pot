@@ -226,3 +226,9 @@ msgstr ""
 
 msgid "Report an issue"
 msgstr ""
+
+msgid "Terminated NAGs"
+msgstr ""
+
+msgid "Open the NAG Terminator admin page"
+msgstr ""

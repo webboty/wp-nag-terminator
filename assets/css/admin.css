@@ -202,3 +202,25 @@ body.nag-terminator-vis-hover .nag-terminator-actions:focus-within {
 .wp-nag-terminator-docs ul {
     margin: 0.5em 0 1em;
 }
+
+/* Admin bar: "Terminated NAGs N" with blue count bubble */
+#wpadminbar .wp-nag-terminator-count {
+    background: #2271b1;
+    color: #fff;
+    border-radius: 9px;
+    padding: 0 7px;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
+    letter-spacing: 0.2px;
+}
+#wpadminbar #wp-admin-bar-wp-nag-terminator:hover .wp-nag-terminator-count,
+#wpadminbar #wp-admin-bar-wp-nag-terminator .ab-item:focus .wp-nag-terminator-count {
+    background: #135e96;
+    color: #fff;
+}
