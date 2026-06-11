@@ -80,9 +80,6 @@ msgstr ""
 msgid "You do not have permission to view this page."
 msgstr ""
 
-msgid "Currently visible"
-msgstr ""
-
 msgid "My hidden NAGs"
 msgstr ""
 
@@ -143,10 +140,7 @@ msgstr ""
 msgid "NAG ID"
 msgstr ""
 
-msgid "No NAGs are visible on this page. Visit any admin page to see the currently visible NAGs."
-msgstr ""
-
-msgid "What is NAG Terminator?"
+msgid "Excerpt"
 msgstr ""
 
 msgid "NAG Terminator hides WordPress admin notice NAGs — the small messages plugins and core display at the top of admin pages. Some can be dismissed with a built-in close button; many cannot, and they come back every page load."

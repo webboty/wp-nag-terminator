@@ -62,9 +62,8 @@ class Admin_Page {
             wp_die( esc_html__( 'You do not have permission to view this page.', 'wp-nag-terminator' ) );
         }
 
-        $tab  = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'active'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $tab  = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'mine'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $tabs = array(
-            'active'      => __( 'Currently visible', 'wp-nag-terminator' ),
             'mine'        => __( 'My hidden NAGs', 'wp-nag-terminator' ),
             'global'      => __( 'NAGs hidden for everyone', 'wp-nag-terminator' ),
             'log'         => __( 'Log', 'wp-nag-terminator' ),
@@ -72,7 +71,7 @@ class Admin_Page {
             'settings'    => __( 'Settings', 'wp-nag-terminator' ),
         );
         if ( ! isset( $tabs[ $tab ] ) ) {
-            $tab = 'active';
+            $tab = 'mine';
         }
 
         $is_admin    = Capabilities::can_manage_settings();
@@ -127,9 +126,13 @@ class Admin_Page {
                 }
                 $this->render_settings();
                 break;
-            case 'active':
             default:
-                $this->render_active();
+                $tab = 'mine';
+                $this->render_list(
+                    $user_map,
+                    __( 'You have not hidden any NAGs yet.', 'wp-nag-terminator' ),
+                    'user'
+                );
                 break;
         }
         echo '</div>';
@@ -304,7 +307,6 @@ class Admin_Page {
 
             <h3><?php esc_html_e( 'The tabs', 'wp-nag-terminator' ); ?></h3>
             <ul style="list-style: disc; padding-left: 24px;">
-                <li><strong><?php esc_html_e( 'Currently visible', 'wp-nag-terminator' ); ?></strong> &mdash; <?php esc_html_e( 'A live snapshot of NAGs on the current admin page.', 'wp-nag-terminator' ); ?></li>
                 <li><strong><?php esc_html_e( 'My hidden NAGs', 'wp-nag-terminator' ); ?></strong> &mdash; <?php esc_html_e( 'NAGs you personally have hidden. Restore any of them with one click.', 'wp-nag-terminator' ); ?></li>
                 <li><strong><?php esc_html_e( 'NAGs hidden for everyone', 'wp-nag-terminator' ); ?></strong> &mdash; <?php esc_html_e( 'NAGs an admin has hidden site-wide. Admin only.', 'wp-nag-terminator' ); ?></li>
                 <li><strong><?php esc_html_e( 'Log', 'wp-nag-terminator' ); ?></strong> &mdash; <?php esc_html_e( 'A read-only history of every hidden NAG on this site, including older versions whose text has since changed.', 'wp-nag-terminator' ); ?></li>
@@ -319,32 +321,6 @@ class Admin_Page {
             </ul>
         </div>
         <?php
-    }
-
-    /**
-     * Render "currently visible" snapshot (live on this page).
-     */
-    private function render_active() {
-        $detector = Plugin::instance()->detector;
-        $detected = is_object( $detector ) ? $detector->detected : array();
-        if ( empty( $detected ) ) {
-            echo '<p>' . esc_html__( 'No NAGs are visible on this page. Visit any admin page to see the currently visible NAGs.', 'wp-nag-terminator' ) . '</p>';
-            return;
-        }
-        echo '<table class="widefat striped">';
-        echo '<thead><tr>';
-        echo '<th>' . esc_html__( 'Excerpt', 'wp-nag-terminator' ) . '</th>';
-        echo '<th>' . esc_html__( 'Source', 'wp-nag-terminator' ) . '</th>';
-        echo '<th>' . esc_html__( 'NAG ID', 'wp-nag-terminator' ) . '</th>';
-        echo '</tr></thead><tbody>';
-        foreach ( $detected as $entry ) {
-            echo '<tr>';
-            echo '<td>' . esc_html( wp_trim_words( $entry['excerpt'] ?? '', 25, '...' ) ) . '</td>';
-            echo '<td>' . esc_html( $entry['source'] ?? '—' ) . '</td>';
-            echo '<td><code>' . esc_html( $entry['id'] ?? '' ) . '</code></td>';
-            echo '</tr>';
-        }
-        echo '</tbody></table>';
     }
 
     /**

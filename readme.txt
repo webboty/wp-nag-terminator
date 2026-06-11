@@ -19,7 +19,7 @@ NAG Terminator lets you take control of the admin notice NAGs that pile up at th
 * Persists dismissals — once hidden, a NAG stays hidden across reloads, browsers, and devices (for that user).
 * "Hide for everyone" hides a NAG for every admin and staff user on the site.
 * A small `?` help button next to the actions opens a popover explaining what they actually do (they only hide the notice, nothing more).
-* Tools → NAG Terminator page has clear tabs: Currently visible, My hidden NAGs, NAGs hidden for everyone, Log (read-only history of every hidden NAG), Documentation, and Settings.
+* Tools → NAG Terminator page has clear tabs: My hidden NAGs, NAGs hidden for everyone, Log (read-only history of every hidden NAG), Documentation, and Settings.
 * A 10-second "Undo" toast appears after dismissing, so a stray click is never fatal.
 * Per-user bypass: site owners can choose roles that keep seeing NAGs even when hidden for everyone.
 * Retention policy: auto-purge log entries older than N days (configurable; default 365).
@@ -56,7 +56,7 @@ No. The output buffer used to detect NAGs is light, and the CSS/JS only load on 
 
 1. Each notice gets inline "Hide for me" and "Hide for everyone" action links plus a `?` help button.
 2. The `?` help popover with a "Learn more" link to the documentation tab.
-3. Tools → NAG Terminator with the Currently visible, My hidden NAGs, NAGs hidden for everyone, and Log tabs.
+3. Tools → NAG Terminator with the My hidden NAGs, NAGs hidden for everyone, and Log tabs.
 
 == Changelog ==
 
