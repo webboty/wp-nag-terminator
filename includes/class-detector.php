@@ -109,10 +109,16 @@ class Detector {
         // That page renders its own notice content (in the Log) and we
         // must not strip or re-tag it.
         if ( false !== strpos( $html, 'wp-nag-terminator-log-content' ) || false !== strpos( $html, 'wp-nag-terminator-wrap' ) ) {
-            // Strip the data-nag-id attribute (in case it was in the original
-            // notice HTML we archived) so the Detector's later processing on
-            // a different request doesn't accidentally match it.
-            $html = preg_replace( '/\s*data-nag-id="[^"]+"/i', '', $html );
+            // Strip data-nag-id attributes that belong to our notice <div>s
+            // (so the Detector doesn't match them on a later render), but
+            // leave attributes on other elements (like Restore buttons) alone.
+            $html = preg_replace_callback(
+                '#<(\w+)([^>]*\bclass\s*=\s*["\'][^"\']*\bnotice\b[^"\']*["\'][^>]*)>#is',
+                function ( $m ) {
+                    return '<' . $m[1] . ' ' . preg_replace( '/\s*data-nag-id="[^"]+"/i', '', $m[2] ) . '>';
+                },
+                $html
+            );
             return $html;
         }
 
