@@ -220,3 +220,9 @@ msgstr ""
 
 msgid "Unknown source"
 msgstr ""
+
+msgid "View on GitHub"
+msgstr ""
+
+msgid "Report an issue"
+msgstr ""

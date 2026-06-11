@@ -1,17 +1,19 @@
 <?php
 /**
  * Plugin Name:       NAG Terminator
- * Plugin URI:        https://example.com/plugins/wp-nag-terminator
+ * Plugin URI:        https://github.com/webboty/wp-nag-terminator
  * Description:       Hide (terminate) WordPress admin notice NAGs for yourself or for everyone, with full restore history.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Tested up to:      6.5
  * Author:            Tony Hartmann
+ * Author URI:        https://github.com/webboty
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       wp-nag-terminator
  * Domain Path:       /languages
+ * GitHub Plugin URI: webboty/wp-nag-terminator
  *
  * @package WpNagTerminator
  */
@@ -20,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WP_NAG_TERMINATOR_VERSION', '1.0.0' );
+define( 'WP_NAG_TERMINATOR_VERSION', '1.1.0' );
 define( 'WP_NAG_TERMINATOR_FILE', __FILE__ );
 define( 'WP_NAG_TERMINATOR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WP_NAG_TERMINATOR_URL', plugin_dir_url( __FILE__ ) );
@@ -36,6 +38,7 @@ require_once WP_NAG_TERMINATOR_DIR . 'includes/class-suppressor.php';
 require_once WP_NAG_TERMINATOR_DIR . 'includes/class-ajax.php';
 require_once WP_NAG_TERMINATOR_DIR . 'includes/class-assets.php';
 require_once WP_NAG_TERMINATOR_DIR . 'includes/class-admin-page.php';
+require_once WP_NAG_TERMINATOR_DIR . 'includes/class-plugin-links.php';
 
 register_activation_hook( __FILE__, array( 'WpNagTerminator\\Installer', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'WpNagTerminator\\Installer', 'deactivate' ) );

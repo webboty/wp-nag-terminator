@@ -63,6 +63,13 @@ class Plugin {
     public $admin_page;
 
     /**
+     * Plugin links instance.
+     *
+     * @var Plugin_Links
+     */
+    public $plugin_links;
+
+    /**
      * Get/create singleton.
      *
      * @return Plugin
@@ -84,18 +91,20 @@ class Plugin {
      * Wire up everything.
      */
     private function boot() {
-        $this->storage     = new Storage();
-        $this->detector    = new Detector( $this->storage );
-        $this->suppressor  = new Suppressor( $this->storage );
-        $this->ajax        = new Ajax( $this->storage );
-        $this->assets      = new Assets( $this->detector );
-        $this->admin_page  = new Admin_Page( $this->storage );
+        $this->storage       = new Storage();
+        $this->detector      = new Detector( $this->storage );
+        $this->suppressor    = new Suppressor( $this->storage );
+        $this->ajax          = new Ajax( $this->storage );
+        $this->assets        = new Assets( $this->detector );
+        $this->admin_page    = new Admin_Page( $this->storage );
+        $this->plugin_links  = new Plugin_Links();
 
         $this->detector->register();
         $this->suppressor->register();
         $this->ajax->register();
         $this->assets->register();
         $this->admin_page->register();
+        $this->plugin_links->register();
 
         load_plugin_textdomain(
             'wp-nag-terminator',

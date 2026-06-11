@@ -4,9 +4,10 @@ Tags: admin, notice, nag, dismiss, hide
 Requires at least: 5.5
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+GitHub Plugin URI: webboty/wp-nag-terminator
 
 Hide (terminate) WordPress admin notice NAGs for yourself, or for everyone — with full restore history.
 
@@ -59,6 +60,18 @@ No. The output buffer used to detect NAGs is light, and the CSS/JS only load on 
 3. Tools → NAG Terminator with the My hidden NAGs, NAGs hidden for everyone, and Log tabs.
 
 == Changelog ==
+
+= 1.1.0 =
+* Friendlier action-link labels: "Hide for me" / "Hide for everyone".
+* Inline `?` help button on every notice opens a modal that explains what the action links actually do, with a "Learn more" link to the in-plugin Documentation tab.
+* New "Documentation" tab with what the plugin does, what each tab does, and tips.
+* Renamed "Terminated for everyone" → "NAGs hidden for everyone".
+* Renamed "Recycle bin" → "Log"; shows the original notice HTML (no action bar inside).
+* Removed the "Currently visible" tab (was always empty on the page where you view it).
+* Settings is now its own tab.
+* Plugin URI + "View on GitHub" link on the Plugins page.
+* Settings link in the Plugins row jumps straight to the Settings tab.
+* Numerous bug fixes: Detector no longer strips log content, sanitize allowlist preserves notice divs, archive merge fixed.
 
 = 1.0.0 =
 * Initial release.
