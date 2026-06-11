@@ -14,15 +14,15 @@ Hide (terminate) WordPress admin notice NAGs for yourself, or for everyone — w
 
 NAG Terminator lets you take control of the admin notice NAGs that pile up at the top of every WordPress admin page.
 
-* Adds two small action links to every notice: "Hide for me" and "Terminate for everyone" (admins only).
+* Adds two small action links to every notice: "Hide for me" and "Hide for everyone" (admins only).
 * Works on notices that have no built-in dismiss button.
 * Persists dismissals — once hidden, a NAG stays hidden across reloads, browsers, and devices (for that user).
-* "Terminate for everyone" hides a NAG for every admin and staff user on the site.
-* Stores an archive (recycle bin) of every dismissed NAG, so you can always restore a NAG that turns out to matter.
+* "Hide for everyone" hides a NAG for every admin and staff user on the site.
+* A small `?` help button next to the actions opens a popover explaining what they actually do (they only hide the notice, nothing more).
+* Tools → NAG Terminator page has clear tabs: Currently visible, My hidden NAGs, NAGs hidden for everyone, Log (read-only history of every hidden NAG), Documentation, and Settings.
 * A 10-second "Undo" toast appears after dismissing, so a stray click is never fatal.
-* Tools → NAG Terminator page lists everything currently visible, your hidden NAGs, globally terminated NAGs, and the full recycle bin.
-* Per-user bypass: site owners can choose roles that keep seeing NAGs even when globally terminated.
-* Retention policy: auto-purge archive entries older than N days (configurable; default 365).
+* Per-user bypass: site owners can choose roles that keep seeing NAGs even when hidden for everyone.
+* Retention policy: auto-purge log entries older than N days (configurable; default 365).
 
 == Installation ==
 
@@ -40,9 +40,13 @@ Each notice is fingerprinted from its normalized text + source hook. This means 
 
 Per-user dismissals are stored in your WordPress user meta, so they follow you anywhere you log in.
 
-= Can I undo a global termination? =
+= Can I undo a global hide? =
 
-Yes. Admins can restore from Tools → NAG Terminator → "Terminated for everyone" or from the recycle bin. There's also a 10-second "Undo" toast right after dismissal.
+Yes. Admins can restore from Tools → NAG Terminator → "NAGs hidden for everyone" or from the Log. There's also a 10-second "Undo" toast right after hiding.
+
+= What does the `?` icon do? =
+
+It opens a popover explaining that the action links only hide the notice — they don't run, fix, or accept anything the notice says. The popover has a "Learn more" link that takes you to the in-plugin documentation tab.
 
 = Does this slow down the admin? =
 
@@ -50,9 +54,9 @@ No. The output buffer used to detect NAGs is light, and the CSS/JS only load on 
 
 == Screenshots ==
 
-1. Each notice gets inline "Hide for me" and "Terminate for everyone" action links.
-2. Tools → NAG Terminator lists everything hidden and lets you restore it.
-3. The recycle bin keeps a history of all dismissed NAGs.
+1. Each notice gets inline "Hide for me" and "Hide for everyone" action links plus a `?` help button.
+2. The `?` help popover with a "Learn more" link to the documentation tab.
+3. Tools → NAG Terminator with the Currently visible, My hidden NAGs, NAGs hidden for everyone, and Log tabs.
 
 == Changelog ==
 

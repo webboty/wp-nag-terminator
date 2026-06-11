@@ -31,7 +31,6 @@
             $toast.append( $undo );
         }
         $( 'body' ).append( $toast );
-        // Force reflow then animate in.
         $toast[ 0 ].offsetHeight; // eslint-disable-line no-unused-expressions
         $toast.addClass( 'is-visible' );
         setTimeout( function () {
@@ -46,12 +45,19 @@
         return $bar.closest( '.notice, div[class*="notice "]' );
     }
 
+    /**
+     * Collect payload for the AJAX call, stripping our own action bar
+     * so the archive (Log) only stores the original notice content.
+     */
     function collectContent( $bar ) {
         var $notice = findNotice( $bar );
+        // Clone the notice and remove the action bar from the clone.
+        var $clone = $notice.clone();
+        $clone.find( '.nag-terminator-actions' ).remove();
         return {
-            content: $notice.prop( 'outerHTML' ) || '',
-            excerpt: $notice.text().substring( 0, 200 ),
-            source: $bar.closest( '.notice' ).attr( 'class' ) || '',
+            content: $clone.prop( 'outerHTML' ) || '',
+            excerpt: $notice.text().substring( 0, 200 ).replace( /\s+/g, ' ' ).trim(),
+            source: $notice.attr( 'class' ) || '',
         };
     }
 
@@ -73,8 +79,7 @@
                 $notice.fadeOut( 200, function () {
                     $notice.remove();
                 } );
-                // Offer 10-second undo (reloads page so the notice reappears).
-                showToast( cfg.i18n.terminated, function () {
+                showToast( cfg.i18n.hidden, function () {
                     post( 'wp_nag_terminator_restore', {
                         nag_id: nagId,
                         scope: scope,
@@ -124,6 +129,46 @@
             } );
     }
 
+    /**
+     * Show the help modal explaining what the action bar does.
+     */
+    function showHelpModal() {
+        // Don't double up.
+        $( '#wp-nag-terminator-modal' ).remove();
+        var $overlay = $( '<div id="wp-nag-terminator-modal" class="wp-nag-terminator-modal-overlay" role="dialog" aria-modal="true" />' );
+        var $dialog = $( '<div class="wp-nag-terminator-modal" />' );
+        $dialog.append( '<h2 class="wp-nag-terminator-modal-title"></h2>' );
+        $dialog.append( '<p class="wp-nag-terminator-modal-body"></p>' );
+        var $footer = $( '<div class="wp-nag-terminator-modal-footer" />' );
+        var $learn = $( '<a class="button button-primary" target="_blank" rel="noopener">' ).text( cfg.i18n.learnMore );
+        $learn.attr( 'href', cfg.docsUrl );
+        var $close = $( '<button type="button" class="button" />' ).text( cfg.i18n.close );
+        $footer.append( $learn ).append( ' ' ).append( $close );
+        $dialog.append( $footer );
+        $overlay.append( $dialog );
+        $( 'body' ).append( $overlay );
+        $dialog.find( '.wp-nag-terminator-modal-title' ).text( cfg.i18n.helpTitle );
+        $dialog.find( '.wp-nag-terminator-modal-body' ).text( cfg.i18n.helpBody );
+
+        function close() {
+            $overlay.fadeOut( 150, function () {
+                $overlay.remove();
+            } );
+            $( document ).off( 'keydown.wpNagTerminatorModal' );
+        }
+        $close.on( 'click', close );
+        $overlay.on( 'click', function ( e ) {
+            if ( e.target === $overlay[ 0 ] ) {
+                close();
+            }
+        } );
+        $( document ).on( 'keydown.wpNagTerminatorModal', function ( e ) {
+            if ( 27 === e.keyCode ) {
+                close();
+            }
+        } );
+    }
+
     $( function () {
         // Hide for me
         $( document ).on( 'click', '.nag-terminator-me', function ( e ) {
@@ -131,7 +176,7 @@
             terminate( $( this ).closest( '.nag-terminator-actions' ), 'user' );
         } );
 
-        // Terminate for everyone: first click shows confirm
+        // Hide for everyone: first click shows confirm
         $( document ).on( 'click', '.nag-terminator-all', function ( e ) {
             e.preventDefault();
             var $bar = $( this ).closest( '.nag-terminator-actions' );
@@ -148,6 +193,12 @@
             var $bar = $( this ).closest( '.nag-terminator-actions' );
             $bar.find( '.nag-terminator-confirm' ).hide();
             terminate( $bar, 'global' );
+        } );
+
+        // Help '?' icon → modal with link to the documentation tab.
+        $( document ).on( 'click', '.nag-terminator-help', function ( e ) {
+            e.preventDefault();
+            showHelpModal();
         } );
 
         // Tools page: restore + delete

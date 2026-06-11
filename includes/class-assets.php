@@ -62,14 +62,17 @@ class Assets {
             'wp-nag-terminator',
             'WpNagTerminator',
             array(
-                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-                'nonce'   => wp_create_nonce( Ajax::NONCE_ACTION ),
-                'i18n'    => array(
-                    'confirmAll'   => __( 'Terminate for all admins?', 'wp-nag-terminator' ),
-                    'restore'      => __( 'Restored.', 'wp-nag-terminator' ),
-                    'terminated'   => __( 'Terminated.', 'wp-nag-terminator' ),
-                    'undo'         => __( 'Undo', 'wp-nag-terminator' ),
-                    'error'        => __( 'Something went wrong.', 'wp-nag-terminator' ),
+                'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
+                'docsUrl'     => admin_url( 'tools.php?page=wp-nag-terminator&tab=docs' ),
+                'nonce'       => wp_create_nonce( Ajax::NONCE_ACTION ),
+                'i18n'        => array(
+                    'helpTitle'   => __( 'About NAG Terminator', 'wp-nag-terminator' ),
+                    'helpBody'    => __( 'These buttons do not run, fix, or accept anything the notice says. They only hide this notice from your view (or from every admin’s view). Hiding is reversible — you can restore any NAG from Tools → NAG Terminator.', 'wp-nag-terminator' ),
+                    'learnMore'   => __( 'Learn more', 'wp-nag-terminator' ),
+                    'close'       => __( 'Close', 'wp-nag-terminator' ),
+                    'hidden'      => __( 'Hidden.', 'wp-nag-terminator' ),
+                    'undo'        => __( 'Undo', 'wp-nag-terminator' ),
+                    'error'       => __( 'Something went wrong.', 'wp-nag-terminator' ),
                 ),
             )
         );

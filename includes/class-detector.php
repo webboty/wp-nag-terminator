@@ -105,6 +105,17 @@ class Detector {
             return $html;
         }
 
+        // Don't process HTML inside the Tools → NAG Terminator admin page.
+        // That page renders its own notice content (in the Log) and we
+        // must not strip or re-tag it.
+        if ( false !== strpos( $html, 'wp-nag-terminator-log-content' ) || false !== strpos( $html, 'wp-nag-terminator-wrap' ) ) {
+            // Strip the data-nag-id attribute (in case it was in the original
+            // notice HTML we archived) so the Detector's later processing on
+            // a different request doesn't accidentally match it.
+            $html = preg_replace( '/\s*data-nag-id="[^"]+"/i', '', $html );
+            return $html;
+        }
+
         $hidden_ids = Storage::get_hidden_ids_for_user();
         $can_global = Capabilities::can_dismiss_global();
 
@@ -168,12 +179,8 @@ class Detector {
      * @return string
      */
     private function render_action_bar( $nag_id, $can_global, $is_dismissable ) {
-        $me_label  = $is_dismissable
-            ? esc_html__( 'Hide for me', 'wp-nag-terminator' )
-            : esc_html__( 'Force-hide for me', 'wp-nag-terminator' );
-        $all_label = $is_dismissable
-            ? esc_html__( 'Terminate for everyone', 'wp-nag-terminator' )
-            : esc_html__( 'Force-terminate for everyone', 'wp-nag-terminator' );
+        $me_label  = esc_html__( 'Hide for me', 'wp-nag-terminator' );
+        $all_label = esc_html__( 'Hide for everyone', 'wp-nag-terminator' );
 
         $html  = '<div class="nag-terminator-actions" data-nag-id="' . esc_attr( $nag_id ) . '">';
         $html .= '<button type="button" class="button-link nag-terminator-me">' . $me_label . '</button>';
@@ -183,10 +190,11 @@ class Detector {
             $html .= '<button type="button" class="button-link nag-terminator-all">' . $all_label . '</button>';
         }
         $html .= '<span class="nag-terminator-confirm" hidden>';
-        $html .= esc_html__( 'Terminate for all admins?', 'wp-nag-terminator' );
+        $html .= esc_html__( 'Hide for all admins?', 'wp-nag-terminator' );
         $html .= ' <button type="button" class="button-link nag-terminator-all-yes">' . esc_html__( 'Yes', 'wp-nag-terminator' ) . '</button>';
         $html .= ' <button type="button" class="button-link nag-terminator-all-no">' . esc_html__( 'Cancel', 'wp-nag-terminator' ) . '</button>';
         $html .= '</span>';
+        $html .= '<a href="#" class="nag-terminator-help" role="button" aria-label="' . esc_attr__( 'What does this do?', 'wp-nag-terminator' ) . '">?</a>';
         $html .= '</div>';
 
         return $html;

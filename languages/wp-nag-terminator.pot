@@ -14,16 +14,10 @@ msgstr ""
 msgid "Hide for me"
 msgstr ""
 
-msgid "Force-hide for me"
+msgid "Hide for everyone"
 msgstr ""
 
-msgid "Terminate for everyone"
-msgstr ""
-
-msgid "Force-terminate for everyone"
-msgstr ""
-
-msgid "Terminate for all admins?"
+msgid "Hide for all admins?"
 msgstr ""
 
 msgid "Yes"
@@ -32,10 +26,22 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-msgid "Restored."
+msgid "What does this do?"
 msgstr ""
 
-msgid "Terminated."
+msgid "About NAG Terminator"
+msgstr ""
+
+msgid "These buttons do not run, fix, or accept anything the notice says. They only hide this notice from your view (or from every admin’s view). Hiding is reversible — you can restore any NAG from Tools → NAG Terminator."
+msgstr ""
+
+msgid "Learn more"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Hidden."
 msgstr ""
 
 msgid "Undo"
@@ -80,34 +86,49 @@ msgstr ""
 msgid "My hidden NAGs"
 msgstr ""
 
-msgid "Terminated for everyone"
+msgid "NAGs hidden for everyone"
 msgstr ""
 
-msgid "Recycle bin"
+msgid "Log"
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
+
+msgid "A read-only history of every NAG that has been hidden on this site, by any user. Use the My hidden NAGs and NAGs hidden for everyone tabs to restore."
+msgstr ""
+
+msgid "The log is empty."
+msgstr ""
+
+msgid "When"
+msgstr ""
+
+msgid "Scope"
+msgstr ""
+
+msgid "Original notice"
+msgstr ""
+
+msgid "Hidden by you"
+msgstr ""
+
+msgid "Hidden for everyone"
+msgstr ""
+
+msgid "archived"
 msgstr ""
 
 msgid "You have not hidden any NAGs yet."
 msgstr ""
 
-msgid "No NAGs have been globally terminated."
-msgstr ""
-
-msgid "The recycle bin is empty."
-msgstr ""
-
-msgid "Older versions of dismissed NAGs are kept here. You can restore them or delete them permanently."
+msgid "No NAGs have been hidden for everyone yet."
 msgstr ""
 
 msgid "Excerpt"
 msgstr ""
 
 msgid "Source"
-msgstr ""
-
-msgid "Scope"
-msgstr ""
-
-msgid "Terminated"
 msgstr ""
 
 msgid "Actions"
@@ -125,13 +146,58 @@ msgstr ""
 msgid "No NAGs are visible on this page. Visit any admin page to see the currently visible NAGs."
 msgstr ""
 
+msgid "What is NAG Terminator?"
+msgstr ""
+
+msgid "NAG Terminator hides WordPress admin notice NAGs — the small messages plugins and core display at the top of admin pages. Some can be dismissed with a built-in close button; many cannot, and they come back every page load."
+msgstr ""
+
+msgid "What the action links actually do"
+msgstr ""
+
+msgid "Despite the wording, the buttons do not run, fix, or accept anything the notice says. They only hide the notice from your view."
+msgstr ""
+
+msgid "Removes the notice only for your account. Other admins and staff continue to see it."
+msgstr ""
+
+msgid "Removes the notice for every admin and staff user on the site."
+msgstr ""
+
+msgid "Hiding is reversible. You can restore any hidden NAG from the Tools → NAG Terminator page."
+msgstr ""
+
+msgid "The tabs"
+msgstr ""
+
+msgid "A live snapshot of NAGs on the current admin page."
+msgstr ""
+
+msgid "NAGs you personally have hidden. Restore any of them with one click."
+msgstr ""
+
+msgid "NAGs an admin has hidden site-wide. Admin only."
+msgstr ""
+
+msgid "A read-only history of every hidden NAG on this site, including older versions whose text has since changed."
+msgstr ""
+
+msgid "Configure retention, role bypass, and link visibility."
+msgstr ""
+
+msgid "Tips"
+msgstr ""
+
+msgid "A 10-second Undo toast appears after hiding a NAG. Use it if you change your mind."
+msgstr ""
+
+msgid "If you still want to see globally-hidden NAGs, ask an admin to add your role to the \"Bypass global terminations\" list in Settings."
+msgstr ""
+
+msgid "Some notices change their text frequently (ads, version numbers). Each version gets its own entry, so old versions stay in the Log."
+msgstr ""
+
 msgid "Settings"
-msgstr ""
-
-msgid "Auto-archive on dismiss"
-msgstr ""
-
-msgid "Save dismissed NAGs to the recycle bin."
 msgstr ""
 
 msgid "Retention (days)"
@@ -143,7 +209,7 @@ msgstr ""
 msgid "Bypass global terminations"
 msgstr ""
 
-msgid "Selected roles will continue to see NAGs even when \"Terminate for everyone\" is in effect."
+msgid "Selected roles will continue to see NAGs even when \"Hide for everyone\" is in effect."
 msgstr ""
 
 msgid "Action link visibility"

@@ -220,7 +220,7 @@ class Storage {
         }
         $archive = self::get_archive();
 
-        $content = isset( $meta['content'] ) ? wp_kses_post( $meta['content'] ) : '';
+        $content = isset( $meta['content'] ) ? Ajax::sanitize_notice_html( $meta['content'] ) : '';
         $excerpt = isset( $meta['excerpt'] ) ? wp_kses_post( $meta['excerpt'] ) : wp_trim_words( wp_strip_all_tags( $content ), 30, '...' );
         $source  = isset( $meta['source_hook'] ) ? sanitize_key( $meta['source_hook'] ) : '';
         $label   = isset( $meta['source_label'] ) ? sanitize_text_field( $meta['source_label'] ) : '';

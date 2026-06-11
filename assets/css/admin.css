@@ -89,3 +89,108 @@
 .wp-nag-terminator-wrap .form-table th {
     width: 240px;
 }
+
+/* Help "?" icon */
+.nag-terminator-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    border-radius: 50%;
+    background: #c3c4c7;
+    color: #fff;
+    font-size: 11px;
+    line-height: 18px;
+    text-decoration: none;
+    font-weight: bold;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+}
+.nag-terminator-help:hover,
+.nag-terminator-help:focus {
+    background: #2271b1;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Modal overlay */
+.wp-nag-terminator-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.wp-nag-terminator-modal {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 520px;
+    width: 100%;
+    padding: 24px;
+    color: #1d2327;
+}
+.wp-nag-terminator-modal-title {
+    margin: 0 0 12px;
+    font-size: 18px;
+    line-height: 1.3;
+}
+.wp-nag-terminator-modal-body {
+    margin: 0 0 20px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #50575e;
+}
+.wp-nag-terminator-modal-footer {
+    text-align: right;
+}
+
+/* Log table */
+.wp-nag-terminator-log td {
+    vertical-align: top;
+}
+.wp-nag-terminator-log .wp-nag-terminator-log-content {
+    background: #f6f7f7;
+    border-left: 3px solid #c3c4c7;
+    padding: 8px 12px;
+    border-radius: 0 3px 3px 0;
+    max-width: 600px;
+}
+.wp-nag-terminator-log .wp-nag-terminator-log-content .notice {
+    margin: 0;
+}
+.wp-nag-terminator-log .wp-nag-terminator-badge {
+    display: inline-block;
+    background: #dcdcde;
+    color: #50575e;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+/* Documentation tab */
+.wp-nag-terminator-docs {
+    max-width: 720px;
+    line-height: 1.6;
+}
+.wp-nag-terminator-docs h2 {
+    font-size: 18px;
+    margin-top: 0;
+}
+.wp-nag-terminator-docs h3 {
+    font-size: 14px;
+    margin-top: 1.5em;
+}
+.wp-nag-terminator-docs ul {
+    margin: 0.5em 0 1em;
+}

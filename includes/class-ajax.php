@@ -76,12 +76,16 @@ class Ajax {
         $scope  = isset( $_POST['scope'] ) ? sanitize_key( wp_unslash( $_POST['scope'] ) ) : 'user';
         $excerpt = isset( $_POST['excerpt'] ) ? sanitize_text_field( wp_unslash( $_POST['excerpt'] ) ) : '';
         $source  = isset( $_POST['source'] ) ? sanitize_key( wp_unslash( $_POST['source'] ) ) : '';
-        $content = isset( $_POST['content'] ) ? wp_kses_post( wp_unslash( $_POST['content'] ) ) : '';
+        $content = isset( $_POST['content'] ) ? self::sanitize_notice_html( wp_unslash( $_POST['content'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
         $nonce   = isset( $_POST['scope_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['scope_nonce'] ) ) : '';
 
         if ( ! self::is_valid_nag_id( $nag_id ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid NAG id.', 'wp-nag-terminator' ) ), 400 );
         }
+
+        // Strip our own action bar from the stored content so the Log shows
+        // the original notice only.
+        $content = self::strip_action_bar( $content );
 
         $meta = array(
             'excerpt'      => $excerpt,
@@ -96,10 +100,14 @@ class Ajax {
                 wp_send_json_error( array( 'message' => __( 'Insufficient capabilities.', 'wp-nag-terminator' ) ), 403 );
             }
             $ok = Storage::dismiss_global( $nag_id, $uid, $meta );
+            // Always archive (the archive is what feeds the Log).
+            if ( $ok ) {
+                Storage::archive( $nag_id, $uid, 'global', $meta );
+            }
         } else {
             $ok = Storage::dismiss_for_user( $uid, $nag_id, $meta );
-            // Also archive on user dismiss if auto-archive is enabled.
-            if ( $ok && ! empty( Installer::get_settings()['auto_archive'] ) ) {
+            // Always archive so the Log shows what the current user has hidden.
+            if ( $ok ) {
                 Storage::archive( $nag_id, $uid, 'user', $meta );
             }
         }
@@ -115,6 +123,117 @@ class Ajax {
                 'user_id'=> $uid,
             )
         );
+    }
+
+    /**
+     * Remove our action bar from a notice HTML string before persisting.
+     *
+     * The action bar is always the last child of the notice div. We strip
+     * the outermost <div class="nag-terminator-actions">...</div> block
+     * using a balanced-tag matcher (no regex).
+     *
+     * @param string $html Notice HTML.
+     * @return string
+     */
+    private static function strip_action_bar( $html ) {
+        if ( '' === $html ) {
+            return $html;
+        }
+        $marker = '<div class="nag-terminator-actions"';
+        $pos    = strpos( $html, $marker );
+        if ( false === $pos ) {
+            return $html;
+        }
+        // Walk forward, tracking depth, to find the matching </div>.
+        $depth    = 0;
+        $i        = $pos;
+        $len      = strlen( $html );
+        $in_tag   = false;
+        $tag_open = false;
+        while ( $i < $len ) {
+            $c = $html[ $i ];
+            if ( ! $in_tag && '<' === $c ) {
+                $in_tag   = true;
+                $tag_open = ( $i + 1 < $len && '/' !== $html[ $i + 1 ] );
+                $i++;
+                continue;
+            }
+            if ( $in_tag ) {
+                if ( '>' === $c ) {
+                    $in_tag = false;
+                    if ( $tag_open ) {
+                        $depth++;
+                    } else {
+                        $depth--;
+                        if ( 0 === $depth ) {
+                            // Found the matching </div> for our action bar.
+                            return substr( $html, 0, $pos ) . substr( $html, $i + 1 );
+                        }
+                    }
+                }
+                $i++;
+                continue;
+            }
+            $i++;
+        }
+        return $html;
+    }
+
+    /**
+     * Sanitize notice HTML allowing the full set of tags/attrs commonly used
+     * by WP core admin notices (and that are safe to re-render in our Log).
+     *
+     * @param string $html Raw notice HTML.
+     * @return string
+     */
+    public static function sanitize_notice_html( $html ) {
+        if ( ! is_string( $html ) || '' === $html ) {
+            return '';
+        }
+        $allowed = array(
+            'div'    => array(
+                'class'      => true,
+                'id'         => true,
+                'data-nag-id'=> true,
+            ),
+            'p'      => array( 'class' => true ),
+            'span'   => array( 'class' => true ),
+            'a'      => array(
+                'href'   => true,
+                'class'  => true,
+                'target' => true,
+                'rel'    => true,
+                'title'  => true,
+            ),
+            'strong' => array(),
+            'em'     => array(),
+            'b'      => array(),
+            'i'      => array(),
+            'br'     => array(),
+            'code'   => array( 'class' => true ),
+            'pre'    => array(),
+            'small'  => array(),
+            'ul'     => array( 'class' => true ),
+            'ol'     => array( 'class' => true ),
+            'li'     => array( 'class' => true ),
+            'button' => array(
+                'type'       => true,
+                'class'      => true,
+                'aria-label' => true,
+                'disabled'   => true,
+            ),
+            'svg'    => array(
+                'class'   => true,
+                'width'   => true,
+                'height'  => true,
+                'viewbox' => true,
+                'xmlns'   => true,
+                'fill'    => true,
+                'aria-hidden' => true,
+            ),
+            'path'   => array( 'd' => true, 'fill' => true ),
+        );
+        return wp_kses( $html, $allowed );
     }
 
     /**

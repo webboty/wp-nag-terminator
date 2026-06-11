@@ -23,9 +23,8 @@ class Installer {
     public static function activate() {
         $existing = get_option( self::OPTION_SETTINGS, array() );
         $defaults = array(
-            'auto_archive'         => 1,
-            'retention_days'       => self::DEFAULT_RETENTION,
-            'bypass_global_roles'  => array(),
+            'retention_days'         => self::DEFAULT_RETENTION,
+            'bypass_global_roles'    => array(),
             'action_link_visibility' => 'always', // 'always' | 'hover'
         );
 
@@ -58,7 +57,6 @@ class Installer {
      */
     public static function get_settings() {
         $defaults = array(
-            'auto_archive'           => 1,
             'retention_days'         => self::DEFAULT_RETENTION,
             'bypass_global_roles'    => array(),
             'action_link_visibility' => 'always',
@@ -79,7 +77,7 @@ class Installer {
      */
     public static function update_setting( $key, $value ) {
         $settings = self::get_settings();
-        $allowed  = array( 'auto_archive', 'retention_days', 'bypass_global_roles', 'action_link_visibility' );
+        $allowed  = array( 'retention_days', 'bypass_global_roles', 'action_link_visibility' );
         if ( ! in_array( $key, $allowed, true ) ) {
             return false;
         }
