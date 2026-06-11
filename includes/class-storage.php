@@ -165,7 +165,7 @@ class Storage {
         );
         $ok = self::save_map( self::OPTION_GLOBAL, $map );
 
-        if ( $ok && ! empty( Installer::get_settings()['auto_archive'] ) ) {
+        if ( $ok ) {
             self::archive( $nag_id, $user_id, 'global', $meta );
         }
         return $ok;

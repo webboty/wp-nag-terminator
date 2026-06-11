@@ -77,7 +77,6 @@ class Ajax {
         $excerpt = isset( $_POST['excerpt'] ) ? sanitize_text_field( wp_unslash( $_POST['excerpt'] ) ) : '';
         $source  = isset( $_POST['source'] ) ? sanitize_key( wp_unslash( $_POST['source'] ) ) : '';
         $content = isset( $_POST['content'] ) ? self::sanitize_notice_html( wp_unslash( $_POST['content'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-        $nonce   = isset( $_POST['scope_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['scope_nonce'] ) ) : '';
 
         if ( ! self::is_valid_nag_id( $nag_id ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid NAG id.', 'wp-nag-terminator' ) ), 400 );

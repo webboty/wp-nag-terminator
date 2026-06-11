@@ -211,13 +211,5 @@
             e.preventDefault();
             deleteArchive( $( this ) );
         } );
-
-        // Apply visibility-hover class if user prefers hover mode.
-        try {
-            var v = document.body.getAttribute( 'data-nag-terminator-vis' );
-            if ( v === 'hover' ) {
-                $( '.nag-terminator-actions' ).addClass( 'visibility-hover' );
-            }
-        } catch ( err ) { /* noop */ }
     } );
 } )( jQuery );

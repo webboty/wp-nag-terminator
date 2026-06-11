@@ -38,20 +38,7 @@
     display: none;
 }
 
-/* Hide on hover mode (legacy: visibility-hover class) */
-.nag-terminator-actions.visibility-hover {
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
-}
-
-.nag-terminator-actions.visibility-hover:hover,
-.nag-terminator-actions.visibility-hover:focus-within,
-.notice:hover .nag-terminator-actions.visibility-hover,
-.notice:focus-within .nag-terminator-actions.visibility-hover {
-    opacity: 1;
-}
-
-/* Hover mode (current: body class) */
+/* Hover mode (uses body class added by the Assets class) */
 body.nag-terminator-vis-hover .nag-terminator-actions {
     opacity: 0;
     max-height: 0;

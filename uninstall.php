@@ -24,10 +24,9 @@ delete_option( 'wp_nag_terminator_settings' );
 $meta_key = 'wp_nag_terminator_dismissed';
 $users    = get_users(
     array(
-        'fields'     => 'ID',
-        'meta_key'   => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-        'number'     => -1,
-        'fields'     => 'ID',
+        'fields'   => 'ID',
+        'meta_key' => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+        'number'   => -1,
     )
 );
 if ( ! is_wp_error( $users ) && is_array( $users ) ) {

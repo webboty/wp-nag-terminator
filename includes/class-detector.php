@@ -86,8 +86,13 @@ class Detector {
             return;
         }
         if ( ob_get_level() > 0 ) {
-            // ob_end_flush() returns false if no active buffer.
-            @ob_end_flush();
+            // Flush our output buffer; suppress the "no buffer to close"
+            // warning by checking the return value first.
+            $flushed = ob_end_flush();
+            if ( false === $flushed ) {
+                // No active buffer at this level — nothing to do.
+                return;
+            }
         }
         $this->buffering = false;
     }
@@ -132,7 +137,7 @@ class Detector {
 
         $result = preg_replace_callback(
             $pattern,
-            function ( $matches ) use ( $hidden_ids, $can_global, &$detected_ref ) {
+            function ( $matches ) use ( $hidden_ids, $can_global ) {
                 $notice_html = $matches[0];
 
                 $excerpt    = $this->make_excerpt( $notice_html );
