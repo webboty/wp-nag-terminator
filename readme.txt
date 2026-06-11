@@ -4,7 +4,7 @@ Tags: admin, notice, nag, dismiss, hide
 Requires at least: 5.5
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 GitHub Plugin URI: webboty/wp-nag-terminator
@@ -67,6 +67,10 @@ WP core (and some plugins) renders the same notice with different text for admin
 3. The blue "Terminated NAGs N" counter in the admin bar.
 
 == Changelog ==
+
+= 1.1.5 =
+* Fix: detect admin notices rendered after `admin_footer` (e.g. the WooCommerce Anti-Fraud plugin's "Select the Default Protection Level" notice). The Detector's output buffer is now closed on `shutdown` at `-PHP_INT_MAX` so notices rendered late in the page (after the body, on `admin_footer`, `admin_print_footer_scripts`, etc.) are still fingerprinted and the "Hide for me / Hide for everyone" action bar is injected. Previously these notices slipped past the buffer and were unhidable.
+* Also skips the buffer entirely for `DOING_AJAX` requests so AJAX responses are never buffered and echoed back at shutdown.
 
 = 1.1.4 =
 * Fix: per-user fingerprint drift — "Hide for everyone" now propagates across role-conditional text variations (e.g. WP core's "update now" vs. "notify the site administrator"). A new "prefix" fingerprint bridges the gap.
