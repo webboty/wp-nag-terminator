@@ -76,7 +76,7 @@ class Storage {
      *
      * @param int    $user_id User ID.
      * @param string $nag_id  NAG ID.
-     * @param array  $meta    Extra metadata (excerpt, source).
+     * @param array  $meta    Extra metadata (excerpt, source, prefix).
      * @return bool
      */
     public static function dismiss_for_user( $user_id, $nag_id, array $meta = array() ) {
@@ -92,6 +92,7 @@ class Storage {
         $map[ $nag_id ] = array(
             'source'    => isset( $meta['source'] ) ? sanitize_key( $meta['source'] ) : '',
             'excerpt'   => isset( $meta['excerpt'] ) ? wp_kses_post( $meta['excerpt'] ) : '',
+            'prefix'    => isset( $meta['prefix'] ) ? sanitize_text_field( $meta['prefix'] ) : '',
             'dismissed' => time(),
         );
         $ok = (bool) update_user_meta( $user_id, self::META_USER, $map );
@@ -169,6 +170,7 @@ class Storage {
         $map[ $nag_id ] = array(
             'source'    => isset( $meta['source'] ) ? sanitize_key( $meta['source'] ) : '',
             'excerpt'   => isset( $meta['excerpt'] ) ? wp_kses_post( $meta['excerpt'] ) : '',
+            'prefix'    => isset( $meta['prefix'] ) ? sanitize_text_field( $meta['prefix'] ) : '',
             'dismissed' => time(),
         );
         $ok = self::save_map( self::OPTION_GLOBAL, $map );
@@ -351,6 +353,7 @@ class Storage {
 
     const COUNT_CACHE_KEY = 'wp_nag_terminator_count_';
     const GLOBAL_VERSION_OPTION = 'wp_nag_terminator_global_version';
+    const PREFIX_BACKFILL_OPTION = 'wp_nag_terminator_prefix_backfilled';
     const COUNT_CACHE_TTL = 300; // 5 minutes
 
     /**
@@ -399,5 +402,47 @@ class Storage {
     public static function invalidate_user_count_cache( $user_id ) {
         $version = (int) get_option( self::GLOBAL_VERSION_OPTION, 1 );
         delete_transient( self::COUNT_CACHE_KEY . (int) $user_id . '_v' . $version );
+    }
+
+    /**
+     * Find a dismissed NAG (per-user + global) whose prefix
+     * fingerprint matches a given prefix. Source is intentionally
+     * NOT used as a filter because it can drift (e.g. WP core
+     * renders the same update notice with different inner links
+     * for admins vs other roles, which trips our
+     * guess_source_label heuristic). The 30-char prefix is
+     * specific enough to identify the NAG without over-matching.
+     *
+     * @param string $prefix_fp  Prefix fingerprint from Detector::prefix_fingerprint().
+     * @return string|null Matching nag_id or null.
+     */
+    public static function find_dismissed_by_prefix_any( $prefix_fp ) {
+        if ( '' === $prefix_fp ) {
+            return null;
+        }
+        $user_id = get_current_user_id();
+        // Check per-user first.
+        $user_map = $user_id ? self::get_user_dismissed( $user_id ) : array();
+        foreach ( $user_map as $nag_id => $meta ) {
+            if ( ! is_array( $meta ) ) {
+                continue;
+            }
+            $meta_prefix = isset( $meta['prefix'] ) ? $meta['prefix'] : '';
+            if ( '' !== $meta_prefix && $meta_prefix === $prefix_fp ) {
+                return $nag_id;
+            }
+        }
+        // Then global.
+        $global_map = self::get_global_dismissed();
+        foreach ( $global_map as $nag_id => $meta ) {
+            if ( ! is_array( $meta ) ) {
+                continue;
+            }
+            $meta_prefix = isset( $meta['prefix'] ) ? $meta['prefix'] : '';
+            if ( '' !== $meta_prefix && $meta_prefix === $prefix_fp ) {
+                return $nag_id;
+            }
+        }
+        return null;
     }
 }

@@ -142,7 +142,23 @@ class Detector {
 
                 $excerpt    = $this->make_excerpt( $notice_html );
                 $source     = $this->guess_source_label( $notice_html );
-                $nag_id     = $this->fingerprint( $notice_html, $source );
+                list( $nag_id, $prefix_fp ) = $this->resolve_fingerprints( $notice_html, $source );
+
+                // Prefix-fallback: if the full nag_id isn't in the hidden
+                // list, look for any previously-dismissed NAG (user or
+                // global) with the same prefix fingerprint. We don't
+                // filter by source because the source label can drift
+                // (e.g. WP core renders the same update notice with
+                // different inner links for admins vs other roles,
+                // which trips our guess_source_label heuristic). The
+                // 30-char prefix is specific enough to identify the
+                // NAG without over-matching.
+                if ( ! in_array( $nag_id, $hidden_ids, true ) && '' !== $prefix_fp ) {
+                    $matched = Storage::find_dismissed_by_prefix_any( $prefix_fp );
+                    if ( $matched ) {
+                        $nag_id = $matched;
+                    }
+                }
 
                 // Store for the current request.
                 $this->detected[ $nag_id ] = array(
@@ -298,6 +314,56 @@ class Detector {
         $normalized = $this->normalize_text( $html );
         $payload    = 'source=' . $source . '|text=' . $normalized;
         return 'nag_' . substr( sha1( $payload ), 0, 10 );
+    }
+
+    /**
+     * Compute a "prefix" fingerprint from the first N characters of the
+     * normalized text. Notices that differ in only the trailing text
+     * (e.g. role-conditional copy at the end) will share this prefix.
+     *
+     * This is used to bridge the per-user fingerprint drift bug where
+     * WP core renders the same update notice with different text for
+     * admins vs non-admins ("update now" vs "notify the site admin").
+     *
+     * The prefix is intentionally short (30 chars) to capture just the
+     * "core" announcement — e.g. "WordPress 7.0 is available!" —
+     * which is the stable part across role-conditional renderings.
+     *
+     * Uses djb2 hash (matches the JS implementation in admin.js so
+     * client and server compute the same fingerprint).
+     *
+     * @param string $html Notice HTML.
+     * @return string
+     */
+    public function prefix_fingerprint( $html ) {
+        $normalized = $this->normalize_text( $html );
+        $prefix     = substr( $normalized, 0, 30 );
+        // djb2 hash, base36-encoded (no zero-padding, mirrors the JS
+        // implementation in admin.js).
+        $h = 5381;
+        $len = strlen( $prefix );
+        for ( $i = 0; $i < $len; $i++ ) {
+            $h = ( ( ( $h << 5 ) + $h ) + ord( $prefix[ $i ] ) ) & 0xFFFFFFFF;
+        }
+        $base36 = base_convert( (string) $h, 10, 36 );
+        return 'nagp_' . substr( $base36, 0, 10 );
+    }
+
+    /**
+     * Resolve a notice to a canonical nag_id, considering both the
+     * full fingerprint and the prefix fingerprint. If the current
+     * notice's prefix matches a stored (dismissed) prefix within
+     * the same source, the dismissed nag_id is returned so the
+     * dismissal carries across role-conditional text variations.
+     *
+     * @param string $html   Notice HTML.
+     * @param string $source Source label.
+     * @return array{0: string, 1: string} [nag_id, prefix_fingerprint]
+     */
+    public function resolve_fingerprints( $html, $source = '' ) {
+        $nag_id = $this->fingerprint( $html, $source );
+        $prefix = $this->prefix_fingerprint( $html );
+        return array( $nag_id, $prefix );
     }
 
     /**

@@ -3,7 +3,7 @@
  * Plugin Name:       NAG Terminator
  * Plugin URI:        https://github.com/webboty/wp-nag-terminator
  * Description:       Hide (terminate) WordPress admin notice NAGs for yourself or for everyone, with full restore history.
- * Version:           1.1.0
+ * Version:           1.1.4
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Tested up to:      6.5
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WP_NAG_TERMINATOR_VERSION', '1.1.0' );
+define( 'WP_NAG_TERMINATOR_VERSION', '1.1.4' );
 define( 'WP_NAG_TERMINATOR_FILE', __FILE__ );
 define( 'WP_NAG_TERMINATOR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WP_NAG_TERMINATOR_URL', plugin_dir_url( __FILE__ ) );

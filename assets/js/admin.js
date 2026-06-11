@@ -46,6 +46,40 @@
     }
 
     /**
+     * Compute a short SHA-1 prefix fingerprint (same shape as
+     * Detector::prefix_fingerprint in PHP). This lets the server
+     * match a notice that has been re-rendered with role-conditional
+     * text (e.g. WP core's "update now" vs "notify the site admin").
+     */
+    function prefixFingerprint( text ) {
+        var s = String( text || '' );
+        // Mirror PHP: strip tags, lowercase, collapse whitespace, trim.
+        s = s.replace( /<[^>]*>/g, '' );
+        s = s.toLowerCase();
+        s = s.replace( /\s+/g, ' ' ).trim();
+        // Replace version-like, dates, URLs (same as PHP).
+        s = s.replace( /\b\d{1,3}(\.\d+){0,3}\b/g, '__VER__' );
+        s = s.replace( /\b\d{4}-\d{2}-\d{2}\b/g, '__DATE__' );
+        s = s.replace( /https?:\/\/\S+/g, '__URL__' );
+        // Truncate to 30 chars (mirror PHP). Short enough to bridge
+        // role-conditional text drift (e.g. "update now" vs "notify
+        // the site admin") but long enough to disambiguate different
+        // NAGs from the same source.
+        if ( s.length > 30 ) {
+            s = s.substring( 0, 30 );
+        }
+        // Lightweight SHA-1-like hash. Use SubtleCrypto? Not available
+        // in older browsers. Use a simple djb2 + base36 instead —
+        // we only need 10 chars and uniqueness within a single
+        // install, not cryptographic strength.
+        var h = 5381;
+        for ( var i = 0; i < s.length; i++ ) {
+            h = ( ( h << 5 ) + h + s.charCodeAt( i ) ) >>> 0;
+        }
+        return 'nagp_' + h.toString( 36 ).substring( 0, 10 );
+    }
+
+    /**
      * Collect payload for the AJAX call, stripping our own action bar
      * so the archive (Log) only stores the original notice content.
      */
@@ -54,10 +88,12 @@
         // Clone the notice and remove the action bar from the clone.
         var $clone = $notice.clone();
         $clone.find( '.nag-terminator-actions' ).remove();
+        var text = $notice.text();
         return {
             content: $clone.prop( 'outerHTML' ) || '',
-            excerpt: $notice.text().substring( 0, 200 ).replace( /\s+/g, ' ' ).trim(),
+            excerpt: text.substring( 0, 200 ).replace( /\s+/g, ' ' ).trim(),
             source: $notice.attr( 'class' ) || '',
+            prefix: prefixFingerprint( text ),
         };
     }
 
@@ -73,6 +109,7 @@
             excerpt: payload.excerpt,
             content: payload.content,
             source: payload.source,
+            prefix: payload.prefix,
         } )
             .done( function () {
                 var $notice = findNotice( $bar );
