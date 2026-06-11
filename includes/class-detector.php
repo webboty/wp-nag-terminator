@@ -105,22 +105,23 @@ class Detector {
             return $html;
         }
 
-        // Don't process HTML inside the Tools → NAG Terminator admin page.
-        // That page renders its own notice content (in the Log) and we
-        // must not strip or re-tag it.
-        if ( false !== strpos( $html, 'wp-nag-terminator-log-content' ) || false !== strpos( $html, 'wp-nag-terminator-wrap' ) ) {
-            // Strip data-nag-id attributes that belong to our notice <div>s
-            // (so the Detector doesn't match them on a later render), but
-            // leave attributes on other elements (like Restore buttons) alone.
-            $html = preg_replace_callback(
-                '#<(\w+)([^>]*\bclass\s*=\s*["\'][^"\']*\bnotice\b[^"\']*["\'][^>]*)>#is',
-                function ( $m ) {
-                    return '<' . $m[1] . ' ' . preg_replace( '/\s*data-nag-id="[^"]+"/i', '', $m[2] ) . '>';
-                },
-                $html
-            );
-            return $html;
-        }
+        // Pull out any notice HTML that lives inside our Log table on the
+        // Tools -> NAG Terminator admin page. We want to keep that HTML
+        // exactly as-is (it was already rendered with the original notice
+        // content + our own data-nag-id attribute). The rest of the page
+        // is processed normally so dismissed NAGs are still hidden here.
+        $placeholders = array();
+        $i            = 0;
+        $html         = preg_replace_callback(
+            '#<div\b[^>]*class\s*=\s*["\'][^"\']*\bwp-nag-terminator-log-content\b[^"\']*["\'][^>]*>.*?</div>\s*</div>#is',
+            function ( $m ) use ( &$placeholders, &$i ) {
+                $key                     = "\x00NAG_LOG_PLACEHOLDER_{$i}\x00";
+                $placeholders[ $key ]    = $m[0];
+                $i++;
+                return $key;
+            },
+            $html
+        );
 
         $hidden_ids = Storage::get_hidden_ids_for_user();
         $can_global = Capabilities::can_dismiss_global();
@@ -171,8 +172,14 @@ class Detector {
         );
 
         if ( null === $result ) {
-            return $html;
+            $result = $html;
         }
+
+        // Put the log-content blocks back where we masked them.
+        if ( ! empty( $placeholders ) ) {
+            $result = strtr( $result, $placeholders );
+        }
+
         return $result;
     }
 

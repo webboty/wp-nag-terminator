@@ -34,6 +34,25 @@ class Assets {
      */
     public function register() {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+        add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
+    }
+
+    /**
+     * Add a body class reflecting the action-link visibility setting so
+     * CSS can dim the action bar in "hover" mode.
+     *
+     * @param string $classes Existing body classes.
+     * @return string
+     */
+    public function admin_body_class( $classes ) {
+        $settings = Installer::get_settings();
+        $vis      = isset( $settings['action_link_visibility'] ) ? $settings['action_link_visibility'] : 'always';
+        if ( 'hover' === $vis ) {
+            $classes .= ' nag-terminator-vis-hover';
+        } else {
+            $classes .= ' nag-terminator-vis-always';
+        }
+        return $classes;
     }
 
     /**

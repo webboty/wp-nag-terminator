@@ -38,7 +38,7 @@
     display: none;
 }
 
-/* Hide on hover mode */
+/* Hide on hover mode (legacy: visibility-hover class) */
 .nag-terminator-actions.visibility-hover {
     opacity: 0;
     transition: opacity 0.15s ease-in-out;
@@ -49,6 +49,27 @@
 .notice:hover .nag-terminator-actions.visibility-hover,
 .notice:focus-within .nag-terminator-actions.visibility-hover {
     opacity: 1;
+}
+
+/* Hover mode (current: body class) */
+body.nag-terminator-vis-hover .nag-terminator-actions {
+    opacity: 0;
+    max-height: 0;
+    padding: 0;
+    margin-top: 0;
+    border-top: 0;
+    overflow: hidden;
+    transition: opacity 0.15s ease-in-out, max-height 0.2s ease-in-out, padding 0.2s ease-in-out;
+}
+body.nag-terminator-vis-hover .notice:hover .nag-terminator-actions,
+body.nag-terminator-vis-hover .notice:focus-within .nag-terminator-actions,
+body.nag-terminator-vis-hover .nag-terminator-actions:hover,
+body.nag-terminator-vis-hover .nag-terminator-actions:focus-within {
+    opacity: 1;
+    max-height: 5em;
+    padding-top: 6px;
+    margin-top: 8px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.08);
 }
 
 /* Toasts */
