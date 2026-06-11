@@ -1,0 +1,162 @@
+# Copyright (C) 2024 Tony Hartmann
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: NAG Terminator 1.0.0\n"
+"Report-Msgid-Bugs-To: https://example.com\n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Manual\n"
+"X-Domain: wp-nag-terminator\n"
+
+msgid "Hide for me"
+msgstr ""
+
+msgid "Force-hide for me"
+msgstr ""
+
+msgid "Terminate for everyone"
+msgstr ""
+
+msgid "Force-terminate for everyone"
+msgstr ""
+
+msgid "Terminate for all admins?"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Restored."
+msgstr ""
+
+msgid "Terminated."
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Something went wrong."
+msgstr ""
+
+msgid "Invalid nonce."
+msgstr ""
+
+msgid "Login required."
+msgstr ""
+
+msgid "Insufficient capabilities."
+msgstr ""
+
+msgid "Invalid NAG id."
+msgstr ""
+
+msgid "Could not save dismissal."
+msgstr ""
+
+msgid "Could not restore."
+msgstr ""
+
+msgid "Could not delete."
+msgstr ""
+
+msgid "Not implemented."
+msgstr ""
+
+msgid "NAG Terminator"
+msgstr ""
+
+msgid "You do not have permission to view this page."
+msgstr ""
+
+msgid "Currently visible"
+msgstr ""
+
+msgid "My hidden NAGs"
+msgstr ""
+
+msgid "Terminated for everyone"
+msgstr ""
+
+msgid "Recycle bin"
+msgstr ""
+
+msgid "You have not hidden any NAGs yet."
+msgstr ""
+
+msgid "No NAGs have been globally terminated."
+msgstr ""
+
+msgid "The recycle bin is empty."
+msgstr ""
+
+msgid "Older versions of dismissed NAGs are kept here. You can restore them or delete them permanently."
+msgstr ""
+
+msgid "Excerpt"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Scope"
+msgstr ""
+
+msgid "Terminated"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Restore"
+msgstr ""
+
+msgid "Delete permanently"
+msgstr ""
+
+msgid "NAG ID"
+msgstr ""
+
+msgid "No NAGs are visible on this page. Visit any admin page to see the currently visible NAGs."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Auto-archive on dismiss"
+msgstr ""
+
+msgid "Save dismissed NAGs to the recycle bin."
+msgstr ""
+
+msgid "Retention (days)"
+msgstr ""
+
+msgid "Set to 0 to keep forever. Old entries are purged daily."
+msgstr ""
+
+msgid "Bypass global terminations"
+msgstr ""
+
+msgid "Selected roles will continue to see NAGs even when \"Terminate for everyone\" is in effect."
+msgstr ""
+
+msgid "Action link visibility"
+msgstr ""
+
+msgid "Always visible"
+msgstr ""
+
+msgid "On hover/focus only"
+msgstr ""
+
+msgid "Save settings"
+msgstr ""
+
+msgid "Unknown source"
+msgstr ""

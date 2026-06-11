@@ -1,0 +1,91 @@
+/* NAG Terminator - inline action bar injected into each admin notice */
+.nag-terminator-actions {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.08);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.nag-terminator-actions .button-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    color: #50575e;
+    cursor: pointer;
+    text-decoration: none;
+    font: inherit;
+}
+
+.nag-terminator-actions .button-link:hover,
+.nag-terminator-actions .button-link:focus {
+    color: #2271b1;
+    text-decoration: underline;
+}
+
+.nag-terminator-actions .nag-terminator-sep {
+    color: #c3c4c7;
+    margin: 0 6px;
+}
+
+.nag-terminator-actions .nag-terminator-confirm {
+    margin-left: 8px;
+    color: #d63638;
+}
+
+.nag-terminator-actions .nag-terminator-confirm[hidden] {
+    display: none;
+}
+
+/* Hide on hover mode */
+.nag-terminator-actions.visibility-hover {
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.nag-terminator-actions.visibility-hover:hover,
+.nag-terminator-actions.visibility-hover:focus-within,
+.notice:hover .nag-terminator-actions.visibility-hover,
+.notice:focus-within .nag-terminator-actions.visibility-hover {
+    opacity: 1;
+}
+
+/* Toasts */
+.wp-nag-terminator-toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: #1d2327;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.wp-nag-terminator-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.wp-nag-terminator-toast .undo {
+    background: transparent;
+    border: 0;
+    color: #72aee6;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+}
+
+/* Tools page niceties */
+.wp-nag-terminator-wrap .form-table th {
+    width: 240px;
+}
